@@ -14,19 +14,29 @@ try{
 
 
 export async function PUT(req){
-    try{
-        const user = await editUser(req.body);
-        return Response.json(user,{status:200});
-    }catch(e){
-        return Response.json({message:e.message},{status:500});
-    }
+    try {
+        const user = await req.json();
+        
+        if (!user?.id) {
+          return Response.json({ message: "User ID is required" }, { status: 400 });
+        }
+        
+        const res = await editUser(user);
+        return Response.json(res, { status: 200 });
+      } catch(e) {
+        return Response.json({ message: e.message }, { status: 500 });
+      }
 }
 
 export async function DELETE(req){
-    try{
-        const user = await deleteUser(req.body.id);
-        return Response.json(user,{status:200});
-    }catch(e){
-        return Response.json({message:e.message},{status:500});
-    }
+    try {
+        const { id } = await req.json(); // Parse the body first
+        if (!id) {
+          return Response.json({ message: "User ID is required" }, { status: 400 });
+        }
+        const user = await deleteUser(id);
+        return Response.json(user, { status: 200 });
+      } catch(e) {
+        return Response.json({ message: e.message }, { status: 500 });
+      }
 }
